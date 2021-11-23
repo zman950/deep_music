@@ -9,8 +9,8 @@ def key_finder(filepath):
     directory = os.listdir('../raw_data/Webscrapping/snes')
     for filepath in directory:
         try:
-            s = '../raw_data/Webscrapping/snes/'
-            score = music21.converter.parse(s+filepath)
+            p = '../raw_data/Webscrapping/snes/'
+            score = music21.converter.parse(p+filepath)
             key = score.analyze('key')
             file_dict[filepath] = (key.tonic.name, key.mode)
         except:
