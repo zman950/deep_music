@@ -55,11 +55,11 @@ class Trainer():
 
         return eval
 
-    def predict_midi(self, X):
-        starter_notes = X[0]
-        print(type(starter_notes))
-        tune = list(X[0].reshape(-1, ))
-        x = X[0].reshape(1, 20, 1)
+    def predict_midi(self, X, n = 20):
+        """where X is a sequence of notes
+            and n is the number of notes"""
+        tune = list(X.reshape(-1, ))
+        x = X.reshape(1, n, 1)
 
         return int(self.model.predict(x))
 
@@ -69,6 +69,28 @@ class Trainer():
 
     def load_model(self, model_path):
         self.model = joblib.load(model_path)
+
+    def predict(self, prev_list, prediction, total_list, n_notes):
+        '''
+        takes in a numpy array of 20 notes, a single note already predicted
+        an empty list (could also contain notes), and a number of notes to
+        generate
+        '''
+        if n_notes == 0:
+            return total_list
+
+        new_list = []
+        for i in prev_list[1:20]:
+            new_list.append(int(i))
+
+        new_list = new_list + [prediction]
+        prediction_array = np.array(new_list).reshape(20,1)
+
+        prediction = self.predict_midi(prediction_array)
+        total_list.append(prediction)
+        n_notes -= 1
+
+        return self.predict(prediction_array, prediction, total_list, n_notes)
 
 
     def save_model(self, upload=True, auto_remove=True):
