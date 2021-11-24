@@ -13,15 +13,15 @@ from tensorflow.keras.layers import SimpleRNN,LSTM,GRU
 from sklearn.model_selection import train_test_split
 from music21 import *
 import joblib
-from pre_processing import generate_dataset
-
+from pre_processing_basic import generate_dataset
+from models import SimpleRNN, simple_rnn
 
 class Trainer():
 
     def __init__(self, model):
-        self.model = model
+        self.model = model()
         self.replicas()
-        X, y = generate_dataset("../raw_data/snes/")
+        X, y = generate_dataset("raw_data/snes/")
         self.evaluate(X, y)
 
     def replicas(self):
@@ -42,9 +42,12 @@ class Trainer():
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05, random_state=42)
         early_stop = tensorflow.keras.callbacks.EarlyStopping(monitor='val_loss', patience=20, verbose=0)
 
-        model = Trainer.build_model()
-        eval = model.fit(X_train, y_train, epochs=20,batch_size=32 * self.strategy.num_replicas_in_sync,
-        validation_data=(X_test,y_test),callbacks=[early_stop])
+        eval = self.model.fit(X_train,
+                              y_train,
+                              epochs=20,
+                              batch_size=32 * self.replicas(),
+                              validation_data=(X_test, y_test),
+                              callbacks=[early_stop])
 
         return eval
 
@@ -54,3 +57,7 @@ class Trainer():
         HINTS : use sklearn.joblib (or jbolib) libraries and google-cloud-storage"""
         joblib.dump(self.model, 'model.joblib')
         print(colored("model.joblib saved locally", "green"))
+
+
+if __name__ == '__main__':
+    basic_trainer = Trainer(simple_rnn)
