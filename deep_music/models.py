@@ -7,7 +7,7 @@ from tensorflow.keras.layers import Conv2D, Conv1D, MaxPooling2D, Flatten, Dense
 
 def simple_rnn():
     model=M.Sequential()
-    model.add(SimpleRNN(units=128, activation='tanh', input_shape=(10,1)))
+    model.add(SimpleRNN(units=128, activation='tanh', input_shape=(20,1)))
     model.add(Dense(1, activation="linear"))
     model.compile(loss='mse',optimizer='rmsprop')
     return model
