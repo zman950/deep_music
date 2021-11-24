@@ -15,6 +15,7 @@ coverage
 flake8
 pytest
 yapf
+colored
 
 # API
 gcsfs

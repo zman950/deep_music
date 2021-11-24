@@ -1,27 +1,27 @@
 import tensorflow.keras.layers as L
 import tensorflow.keras.models as M
 import tensorflow.keras
-from tensorflow.keras.layers import SimpleRNN,LSTM,GRU
+from tensorflow.keras.layers import SimpleRNN,LSTM,GRU, Activation
 from tensorflow.keras.layers import Conv2D, Conv1D, MaxPooling2D, Flatten, Dense, MaxPooling1D, Conv1DTranspose
 
-
+INPUT_SIZE = (20, 1)
 def simple_rnn():
     model=M.Sequential()
-    model.add(SimpleRNN(units=128, activation='tanh', input_shape=(20,1)))
+    model.add(SimpleRNN(units=128, activation='tanh', input_shape=INPUT_SIZE))
     model.add(Dense(1, activation="linear"))
     model.compile(loss='mse',optimizer='rmsprop')
     return model
 
 def LSTM_model():
     model=M.Sequential()
-    model.add(LSTM(128,input_shape=(10,1)))
+    model.add(LSTM(128, input_shape=INPUT_SIZE))
     model.add(L.Dense(1,'relu'))
     model.compile(loss='MSE',optimizer='adam')
     return model
 
 def LSTM_softmax_model():
     model=M.Sequential()
-    model.add(LSTM(128,input_shape=(10,1),return_sequences=True))
+    model.add(LSTM(128,input_shape=INPUT_SIZE,return_sequences=True))
     model.add(LSTM(128))
     model.add(L.Flatten())
     model.add(L.Dense(40,'relu'))
@@ -31,7 +31,7 @@ def LSTM_softmax_model():
 
 def LSTM_2_model():
     model=M.Sequential()
-    model.add(LSTM(200,input_shape=(10,1),unroll=True,return_sequences=True))
+    model.add(LSTM(200,input_shape=INPUT_SIZE,unroll=True,return_sequences=True))
     model.add(L.Dropout(0.4))
     model.add(LSTM(100))
     model.add(L.Dense(100,'relu'))
@@ -42,14 +42,14 @@ def LSTM_2_model():
 
 def gru_model():
     model=M.Sequential()
-    model.add(GRU(units=200, input_shape=(10,1), activation='tanh'))
+    model.add(GRU(units=200, input_shape=INPUT_SIZE, activation='tanh'))
     model.add(L.Dense(1,'relu'))
     model.compile(loss='mse',optimizer='rmsprop')
     return model
 
 def gru_softmax_model():
     model=M.Sequential()
-    model.add(GRU(units=128,input_shape=(10,1),return_sequences=True))
+    model.add(GRU(units=128,input_shape=INPUT_SIZE,return_sequences=True))
     model.add(GRU(128))
     model.add(L.Flatten())
     model.add(L.Dense(40,'relu'))
@@ -59,7 +59,7 @@ def gru_softmax_model():
 
 def gru_2_model():
     model=M.Sequential()
-    model.add(GRU(units=128,input_shape=(10,1),return_sequences=True))
+    model.add(GRU(units=128,input_shape=INPUT_SIZE,return_sequences=True))
     model.add(L.Dropout(0.4))
     model.add(GRU(128, return_sequences=True))
     model.add(L.Dropout(0.4))
@@ -68,10 +68,10 @@ def gru_2_model():
     model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
     return model
 
-def conv1d_model():
+def conv1d_model(time_window_size = 1):
     model = M.Sequential()
     model.add(Conv1D(filters=256, kernel_size=6, padding='same', activation='relu',
-                         input_shape=(10, 1)))
+                         input_shape=INPUT_SIZE))
     model.add(MaxPooling1D(pool_size=4))
     model.add(LSTM(64))
     model.add(Dense(units=time_window_size, activation='linear'))
