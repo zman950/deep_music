@@ -33,12 +33,15 @@ def generate_dataset(directory, n = 10):
     counter = 0
     for file in files:
         if file.endswith(".mid"):
-            counter += 1
-            path_to_song = directory + file
-            midi_file = md.MidiFile(path_to_song)
-            list_of_notes = list_notes(midi_file)
-            training_dataset(list_of_notes, X, y)
-
+            try:
+                counter += 1
+                path_to_song = directory + file
+                midi_file = md.MidiFile(path_to_song)
+                list_of_notes = list_notes(midi_file)
+                training_dataset(list_of_notes, X, y)
+                print("counter: {}, songs remaining: {}".format(counter, n - counter))
+            except:
+                print("song failed")
         if counter == n:
             break
 
