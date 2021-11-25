@@ -4,12 +4,15 @@ import tensorflow.keras
 from tensorflow.keras.layers import SimpleRNN,LSTM,GRU, Activation
 from tensorflow.keras.layers import Conv2D, Conv1D, MaxPooling2D, Flatten, Dense, MaxPooling1D, Conv1DTranspose
 
-INPUT_SIZE = (20, 1)
+INPUT_SIZE = (60, 96)
 def simple_rnn():
     model=M.Sequential()
     model.add(SimpleRNN(units=128, activation='tanh', input_shape=INPUT_SIZE))
-    model.add(Dense(1, activation="linear"))
+    model.add(Dense(50, activation="linear"))
+    model.add(Dense(36, activation="softmax"))
+
     model.compile(loss='mse',optimizer='rmsprop')
+
     return model
 
 def LSTM_model():

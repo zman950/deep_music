@@ -78,7 +78,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description='Load songs, preprocess them and put them into a dataset.')
     parser.add_argument('--data_folder',
-                        default=["deep_music/data/raw"],
+                        default=["deep_music/data/raw/"],
                         type=str,
                         help='The path to the midi data',
                         action='append')
