@@ -17,7 +17,7 @@ from termcolor import colored
 class Trainer():
 
     def __init__(self, model, trained = None):
-        self.X, self.y = generate_dataset("../raw_data/snes/")
+        self.X, self.y = generate_dataset("../raw_data/snes/", 50)
         if trained != None:
             self.load_model(trained)
             prediction = self.predict_midi(self.X)

@@ -4,9 +4,9 @@
 Load songs from midi, preprocess and save them in numpy format.
 """
 
-import midi_utils
+import deep_music.midi_utils
 import os
-import music_utils
+import deep_music.music_utils
 import numpy as np
 import argparse
 
