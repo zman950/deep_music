@@ -2,57 +2,49 @@ import music21
 import os
 import mido
 import pandas as pd
+THRESHOLD = 30
+from IPython.display import clear_output
+
 
 def get_properties(filepath):
     file_dict = {}
     songs = os.listdir(filepath)
     counter = 0
-    for song in songs:
-        s = filepath
-        counter +=1
-        song_len = length_filter(s+song)
-        song_key, song_mode = key_finder(s+song)
-        song_bpm = bpm_finder(s+song)
-        file_dict[song] = [song_len, song_key, song_mode, song_bpm]
-        if counter == 5:
-            break
+    for index, song in enumerate(songs):
+        if song.endswith(".mid"):
+            try:
+                s = filepath
+                mid = mido.MidiFile(s+song)
+                if mid.length > THRESHOLD:
+                        song_key, song_mode = key_finder(s + song)
+                        song_bpm = bpm_finder(mid)
+                        file_dict[song] = [mid.length, song_key, song_mode, song_bpm]
+            except:
+                print(f"{song} failed to load")
+
+            clear_output(wait=True)
+            print(f"Currently processing {index}/{len(songs)}")
+
     return file_dict
 
-
-def length_filter(song, length = 30):
-    '''function that removes tracks under a certain length
-    '''
-    mid = mido.MidiFile(song, clip = True)
-    if mid.length > length:
-        return mid.length
-    return 'None'
-
-def key_finder(song):
+def key_finder(filename):
     '''function that returns dictionnary tuple of key name and mode
     of midi songs.
     If fails return none'''
-    try:
-        score = music21.converter.parse(song)
-        key = score.analyze('key')
-        return (key.tonic.name, key.mode)
-    except:
-        return 'None'
+    score = music21.converter.parse(filename)
+    key = score.analyze('key')
+    return (key.tonic.name, key.mode)
 
-def bpm_finder(song):
+def bpm_finder(mid):
     '''function that returns the bpm as integer of midi song.
-    If fails return 120'''
-    mid = mido.MidiFile(song, clip = True)
-    for msg in mid.tracks[0]:
-        counter2 = 0
-        if msg.type == 'set_tempo':
-            if counter2 == 1:
-                break
-            counter2 += 1
-            tempo = msg.tempo
-            bpm = mido.tempo2bpm(tempo)
-            return int(bpm)
+    If fails return 120 - the default tempo'''
+
+    for track in mid.tracks[0]:
+        if (track.dict().get("type") == "set_tempo"):
+            return int(mido.tempo2bpm(track.dict().get("tempo")))
     return 120
 
 
+
 if __name__ == '__main__':
-    print(key_finder('/Users/annavaugrante/code/zman950/deep_music/raw_data/Webscrapping/snes'))
+    print(get_properties)
