@@ -9,10 +9,10 @@ INPUT_SIZE = (60, 96)
 def simple_rnn():
     model=M.Sequential()
     model.add(SimpleRNN(units=128, activation='tanh', input_shape=INPUT_SIZE))
-    model.add(Dense(50, activation="linear"))
+    model.add(Dense(50, activation="relu"))
     model.add(Dense(3456, activation="softmax", ))
     model.add(Reshape((36,96)))
-    model.compile(loss='mse',optimizer='rmsprop')
+    model.compile(loss='categorical_crossentropy',optimizer='rmsprop')
 
     return model
 
@@ -20,7 +20,12 @@ def LSTM_model():
     model=M.Sequential()
     model.add(LSTM(128, input_shape=INPUT_SIZE))
     model.add(L.Dense(1,'relu'))
-    model.compile(loss='MSE',optimizer='adam')
+    model.add(Dense(
+        3456,
+        activation="softmax",
+    ))
+    model.add(Reshape((36, 96)))
+    model.compile(loss='categorical_crossentropy',optimizer='adam')
     return model
 
 def LSTM_softmax_model():
@@ -29,7 +34,11 @@ def LSTM_softmax_model():
     model.add(LSTM(128))
     model.add(L.Flatten())
     model.add(L.Dense(40,'relu'))
-    model.add(L.Dense(40,'softmax'))
+    model.add(Dense(
+        3456,
+        activation="softmax",
+    ))
+    model.add(Reshape((36, 96)))
     model.compile(loss='categorical_crossentropy',optimizer='adam')
     return model
 
@@ -40,15 +49,23 @@ def LSTM_2_model():
     model.add(LSTM(100))
     model.add(L.Dense(100,'relu'))
     model.add(L.Dropout(0.2))
-    model.add(L.Dense(1, 'relu'))
-    model.compile(loss='MSE', optimizer='adam')
+    model.add(Dense(
+        3456,
+        activation="softmax",
+    ))
+    model.add(Reshape((36, 96)))
+    model.compile(loss='categorical_crossentropy', optimizer='adam')
     return model
 
 def gru_model():
     model=M.Sequential()
     model.add(GRU(units=200, input_shape=INPUT_SIZE, activation='tanh'))
-    model.add(L.Dense(1,'relu'))
-    model.compile(loss='mse',optimizer='rmsprop')
+    model.add(Dense(
+        3456,
+        activation="softmax",
+    ))
+    model.add(Reshape((36, 96)))
+    model.compile(loss='categorical_crossentropy',optimizer='rmsprop')
     return model
 
 def gru_softmax_model():
@@ -57,7 +74,11 @@ def gru_softmax_model():
     model.add(GRU(128))
     model.add(L.Flatten())
     model.add(L.Dense(40,'relu'))
-    model.add(L.Dense(40,'softmax'))
+    model.add(Dense(
+        3456,
+        activation="softmax",
+    ))
+    model.add(Reshape((36, 96)))
     model.compile(loss='categorical_crossentropy',optimizer='rmsprop')
     return model
 
