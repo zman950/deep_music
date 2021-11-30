@@ -6,7 +6,8 @@ import joblib
 from deep_music.predict import predict_basic
 from fastapi import FastAPI, File, UploadFile
 from deep_music.magenta_testing import PreTrainedRnn
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
+import json
 
 MODEL_PATH = 'deep_music/data/magenta_models/basic_rnn.mag'
 
@@ -38,13 +39,14 @@ def basic_predict(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a
     for i in string_input:
         number_input.append(int(i))
     X = np.array(number_input).reshape(20, 1)
-    prediction = predict_basic(X, 38, [], 20)
+    prediction = predict_basic(X, a18, [], 20)
     return prediction
 
 
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile = File(...)):
     model = PreTrainedRnn(MODEL_PATH)
+    # json.loads(file)
     contents = file.file
     contents = await file.read()
 
@@ -57,11 +59,4 @@ async def create_upload_file(file: UploadFile = File(...)):
     melody = model.melody_to_seq(file.filename)
     model.generate_new_melody(500, 1, melody, "test_midi.mid")
 
-    return {"filename": file.filename}
-    # def iterfile():
-
-    #     with open("test_midi.mid", mode="rb") as file_like:
-
-    #         yield from file_like
-
-    # return StreamingResponse(iterfile(), media_type="music/mid")
+    return FileResponse("deep_music/data/results/test_midi.mid", media_type="audio/mid")
